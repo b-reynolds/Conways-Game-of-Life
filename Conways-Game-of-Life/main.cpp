@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include "Game.h"
 
 int main()
 {
@@ -10,6 +11,8 @@ int main()
 
 	sf::Clock delta_clock;
 	float delta_time = 0.0f;
+
+	Game game;
 
 	while(window.isOpen())
 	{
@@ -23,7 +26,11 @@ int main()
 					break;
 			}
 
+			game.update(window, delta_time);
+
 			window.clear();
+
+			game.draw(window);
 
 			window.display();
 
