@@ -1,21 +1,51 @@
 #include "game.h"
+#include "global.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <config_parser.h>
 
 Game::Game(sf::RenderWindow* window)
 {
+	ConfigParser config_parser;
+	auto result = config_parser.parse(kConfigFile);
+
+
+	std::string output;
+
+	if (!ConfigParser::find(result, "iterations_per_second_max", output) || !ConfigParser::to_uint(output, iterations_per_second_max))
+	{
+		iterations_per_second_max = kIterationsPerSecondMaxDefault;
+	}
+	if (!ConfigParser::find(result, "cell_size", output) || !ConfigParser::to_uint(output, cell_size) || cell_size == 0)
+	{
+		cell_size = kCellSizeDefault;
+	}
+
+	int cell_colour_r;
+	int cell_colour_g;
+	int cell_colour_b;
+
+	if(!ConfigParser::find(result, "cell_colour_r", output) || !ConfigParser::to_int(output, cell_colour_r) || cell_colour_r < 0 || cell_colour_r > 255 ||
+		!ConfigParser::find(result, "cell_colour_g", output) || !ConfigParser::to_int(output, cell_colour_g) || cell_colour_g < 0 || cell_colour_g > 255 ||
+		!ConfigParser::find(result, "cell_colour_b", output) || !ConfigParser::to_int(output, cell_colour_b) || cell_colour_b < 0 || cell_colour_b > 255)
+	{
+		cell_colour_r = kCellColourRDefault;
+		cell_colour_g = kCellColourGDefault;
+		cell_colour_b = kCellColourBDefault;
+	}
+
 	window_ = window;
 	generations_ = 0;
 	population_ = 0;
 	toggle_was_pressed_ = false;
-	timer_ = Timer(1000.0f / kIterationsPerSecondMax / 1000.0f);
+	timer_ = Timer(1000.0f / iterations_per_second_max / 1000.0f);
 	active_ = false;
 
-	sf::Vector2u window_size = window->getSize();
+	sf::Vector2u window_size = window_->getSize();
 
-	rows_ = window_size.x / kCellSize;
-	columns_ = window_size.y / kCellSize;
+	rows_ = window_size.x / cell_size;
+	columns_ = window_size.y / cell_size;
 
 	cells_.resize(rows_, std::vector<Cell>(columns_, Cell()));
 
@@ -23,7 +53,8 @@ Game::Game(sf::RenderWindow* window)
 	{
 		for(unsigned int y = 0; y < columns_; ++y)
 		{
-			cells_[x][y] = Cell(sf::Vector2i(x, y), kCellSize);
+			cells_[x][y] = Cell(sf::Vector2i(x, y), cell_size);
+			cells_[x][y].set_alive_colour(sf::Color(cell_colour_r, cell_colour_g, cell_colour_b));
 		}
 	}
 }
@@ -55,7 +86,7 @@ void Game::handle_input()
 {
 	if (sf::Mouse::isButtonPressed(kButtonAlive))
 	{
-		sf::Vector2i node_position = sf::Mouse::getPosition(*window_) / static_cast<int>(kCellSize);
+		sf::Vector2i node_position = sf::Mouse::getPosition(*window_) / static_cast<int>(cell_size);
 		if (cell_within_bounds(node_position))
 		{
 			cells_[node_position.x][node_position.y].set_alive(true);
@@ -63,7 +94,7 @@ void Game::handle_input()
 	}
 	else if(sf::Mouse::isButtonPressed(kButtonDead))
 	{
-		sf::Vector2i node_position = sf::Mouse::getPosition(*window_) / static_cast<int>(kCellSize);
+		sf::Vector2i node_position = sf::Mouse::getPosition(*window_) / static_cast<int>(cell_size);
 		if (cell_within_bounds(node_position))
 		{
 			cells_[node_position.x][node_position.y].set_alive(false);
@@ -156,7 +187,7 @@ bool Game::cell_within_bounds(const sf::Vector2i& position) const
 	return position.x >= 0 && position.y >= 0 && position.x < static_cast<int>(rows_) && position.y < static_cast<int>(columns_);
 }
 
-std::vector<Cell*>& Game::get_neighbours(const Cell& node)
+std::vector<Cell*> Game::get_neighbours(const Cell& node)
 {
 	std::vector<Cell*> neighbours;
 

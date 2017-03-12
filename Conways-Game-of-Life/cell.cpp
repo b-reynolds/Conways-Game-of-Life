@@ -2,7 +2,6 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 sf::Color const Cell::kClrDead = sf::Color(25, 25, 25);
-sf::Color const Cell::kClrAlive = sf::Color(196, 102, 183);
 sf::Color const Cell::kClrOutline = sf::Color(35, 35, 35);
 
 Cell::Cell() : Cell(sf::Vector2i(0, 0), 32) {}
@@ -27,10 +26,15 @@ sf::Vector2i Cell::position() const
 	return position_;
 }
 
+void Cell::set_alive_colour(const sf::Color& colour)
+{
+	clr_alive_ = colour;
+}
+
 void Cell::set_alive(const bool& alive)
 {
 	alive_ = alive;
-	shape_.setFillColor(alive_ ? kClrAlive : kClrDead);
+	shape_.setFillColor(alive_ ? clr_alive_ : kClrDead);
 }
 
 bool Cell::alive() const

@@ -21,15 +21,17 @@ class Game
 
  private:
 
-	const unsigned int kCellSize = 16;
-	const int kIterationsPerSecondMax = 10;
+	const unsigned int kCellSizeDefault = 16;
+	const unsigned int kIterationsPerSecondMaxDefault = 25;
+
+	const int kCellColourRDefault = 0;
+	const int kCellColourGDefault = 196;
+	const int kCellColourBDefault = 0;
 
 	const sf::Keyboard::Key kKeyToggleActive = sf::Keyboard::Space;
 	const sf::Keyboard::Key kKeyClear = sf::Keyboard::C;
 	const sf::Mouse::Button kButtonAlive = sf::Mouse::Left;
 	const sf::Mouse::Button kButtonDead = sf::Mouse::Right;
-
-	const char* kWinTitle = "Conway's Game of Life ";
 
 	sf::RenderWindow* window_;
 	Timer timer_;
@@ -43,6 +45,9 @@ class Game
 	unsigned int generations_;
 	unsigned int population_;
 
+	unsigned int cell_size;
+	unsigned int iterations_per_second_max;
+
 	bool toggle_was_pressed_;
 	bool active_;
 
@@ -53,7 +58,7 @@ class Game
 	void reset();
 
 	bool cell_within_bounds(const sf::Vector2i& position) const;
-	std::vector<Cell*>& get_neighbours(const Cell& node);
+	std::vector<Cell*> get_neighbours(const Cell& node);
 
 };
 

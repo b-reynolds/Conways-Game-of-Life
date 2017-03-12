@@ -17,6 +17,8 @@ class Cell
 
 	sf::Vector2i position() const;
 
+	void set_alive_colour(const sf::Color& colour);
+
 	void set_alive(const bool &alive);
 	bool alive() const;
 
@@ -25,6 +27,8 @@ class Cell
 	static const sf::Color kClrDead;
 	static const sf::Color kClrAlive;
 	static const sf::Color kClrOutline;
+
+	sf::Color clr_alive_;
 		
 	sf::RectangleShape shape_;
 	sf::Vector2i position_;
