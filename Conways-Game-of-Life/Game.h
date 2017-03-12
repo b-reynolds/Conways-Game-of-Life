@@ -3,6 +3,7 @@
 #include "cell.h"
 #include "timer.h"
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
 
 namespace sf {
 	class RenderWindow;
@@ -25,13 +26,15 @@ class Game
 
 	const sf::Keyboard::Key kKeyToggleActive = sf::Keyboard::Space;
 	const sf::Keyboard::Key kKeyClear = sf::Keyboard::C;
+	const sf::Mouse::Button kButtonAlive = sf::Mouse::Left;
+	const sf::Mouse::Button kButtonDead = sf::Mouse::Right;
 
 	const char* kWinTitle = "Conway's Game of Life ";
 
 	sf::RenderWindow* window_;
 	Timer timer_;
 
-	std::vector<std::vector<Cell>> nodes_;
+	std::vector<std::vector<Cell>> cells_;
 	std::vector<std::pair<Cell*, bool>> changes_;
 
 	unsigned int rows_;
@@ -44,12 +47,13 @@ class Game
 	bool active_;
 
 	void handle_input();
-	void apply_changes();
-	void calculate_changes();
+
+	void step();
+
 	void reset();
 
-	bool node_within_bounds(const sf::Vector2i& position) const;
-	std::vector<Cell*> get_neighbours(const Cell& node);
+	bool cell_within_bounds(const sf::Vector2i& position) const;
+	std::vector<Cell*>& get_neighbours(const Cell& node);
 
 };
 
