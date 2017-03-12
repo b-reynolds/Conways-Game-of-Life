@@ -145,7 +145,6 @@
     <ClInclude Include="global.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
     <ClInclude Include="timer.h" />
   </ItemGroup>
   <ItemGroup>

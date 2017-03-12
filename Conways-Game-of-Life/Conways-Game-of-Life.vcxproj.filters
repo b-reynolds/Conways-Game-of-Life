@@ -47,9 +47,6 @@
     <ClInclude Include="global.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>Util</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Conways-Game-of-Life.rc">
